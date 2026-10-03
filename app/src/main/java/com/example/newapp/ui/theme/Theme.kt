@@ -1,4 +1,4 @@
-package com.example.newapp.ui.theme
+﻿package com.example.newapp.ui.theme
 
 import android.content.Context
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -199,6 +199,102 @@ fun TydennikTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = AppThemes.getColorScheme(themeType, darkTheme)
+=======
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.toArgb
+=======
+
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
+
+// Blue Theme Colors
+private val BlueLightColorScheme = lightColorScheme(
+    primary = BluePrimary,
+    secondary = BlueSecondary,
+    tertiary = BlueTertiary
+)
+
+private val BlueDarkColorScheme = darkColorScheme(
+    primary = BluePrimaryDark,
+    secondary = BlueSecondaryDark,
+    tertiary = BlueTertiaryDark
+=======
+private val LightColorScheme = lightColorScheme(
+    primary = Purple40,
+    secondary = PurpleGrey40,
+    tertiary = Pink40
+
+)
+
+// Green Theme Colors
+private val GreenLightColorScheme = lightColorScheme(
+    primary = GreenPrimary,
+    secondary = GreenSecondary,
+    tertiary = GreenTertiary
+)
+
+private val GreenDarkColorScheme = darkColorScheme(
+    primary = GreenPrimaryDark,
+    secondary = GreenSecondaryDark,
+    tertiary = GreenTertiaryDark
+)
+
+// Orange Theme Colors
+private val OrangeLightColorScheme = lightColorScheme(
+    primary = OrangePrimary,
+    secondary = OrangeSecondary,
+    tertiary = OrangeTertiary
+)
+
+private val OrangeDarkColorScheme = darkColorScheme(
+    primary = OrangePrimaryDark,
+    secondary = OrangeSecondaryDark,
+    tertiary = OrangeTertiaryDark
+)
+
+enum class AppThemeColor {
+    BLUE, GREEN, ORANGE
+}
+
+@Composable
+fun NewAppTheme(
+    themeColor: AppThemeColor = AppThemeColor.BLUE,
+=======
+
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    // Dynamic color is available on Android 12+
+    dynamicColor: Boolean = false,
+    content: @Composable () -> Unit
+) {
+    val colorScheme = when {
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            val context = LocalContext.current
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
+        else -> when (themeColor) {
+            AppThemeColor.BLUE -> if (darkTheme) BlueDarkColorScheme else BlueLightColorScheme
+            AppThemeColor.GREEN -> if (darkTheme) GreenDarkColorScheme else GreenLightColorScheme
+            AppThemeColor.ORANGE -> if (darkTheme) OrangeDarkColorScheme else OrangeLightColorScheme
+        }
+    }
+
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = colorScheme.primary.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+        }
+    }
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+        }
+    }
+
 
     MaterialTheme(
         colorScheme = colorScheme,
@@ -206,3 +302,4 @@ fun TydennikTheme(
         content = content
     )
 }
+
